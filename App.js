@@ -1,51 +1,39 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import Torch from 'react-native-torch';
 import RNShake from 'react-native-shake';
+import Touchable from './components/touchable';
 
 const App = () => {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(true);
 
-  const handleChangeToggle = () => setToggle(oldToggle => !oldToggle);
+  const handleChangeToggle = () => {
+    setToggle(oldToggle => !oldToggle);
+  }
 
   useEffect(() => {
-    // Liga flash do celular
     Torch.switchState(toggle);
   }, [toggle]);
 
   useEffect(() => {
-    /**
-     * Quando o celular for chacoalhado, mudaremos o toggle
-     */
     const subscription = RNShake.addListener(() => {
       setToggle(oldToggle => !oldToggle);
     });
 
-    // Essa func vai ser chamada quando o componets
-    // For ser desmontado
     return () => subscription.remove();
   }, []);
 
   return (
     <View style={toggle ? style.containerLight : style.container}>
-      <TouchableOpacity onPress={handleChangeToggle}>
-        <Image
-          style={toggle ? style.lightingOn : style.lightingOff}
-          source={
-            toggle
-              ? require('./assets/icons/eco-light.png')
-              : require('./assets/icons/eco-light-off.png')
-          }
-        />
-        <Image
-          style={style.dioLogo}
-          source={
-            toggle
-              ? require('./assets/icons/logo-dio.png')
-              : require('./assets/icons/logo-dio-white.png')
-          }
-        />
-      </TouchableOpacity>
+      <Image
+        style={ toggle ? style.lightingOn : style.lightingOff }
+        source={
+          toggle
+            ? require('./assets/icons/eco-light.png')
+            : require('./assets/icons/eco-light-off.png')
+        }
+      />
+      <Touchable handleChangeToggle={handleChangeToggle} toggle={toggle} />
     </View>
   );
 };
@@ -77,11 +65,5 @@ const style = StyleSheet.create({
     tintColor: 'white',
     width: 150,
     height: 150,
-  },
-  dioLogo: {
-    resizeMode: 'contain',
-    alignSelf: 'center',
-    width: 250,
-    height: 250,
-  },
+  }
 });
